@@ -28,7 +28,7 @@ class ClassController extends  Controller{
      */
     public function excelImport(){
         //获取文件名，并转编码
-        $filename = iconv('UTF-8', 'GB2312', C('UPLOADS').I('post.fileName'));
+        $filename = iconv('UTF-8', 'GBK',I('post.filePath'));
         //引入读取excel类文件,这里要是物理路径
 //        import('PHPEXCEL.IOFactory',C('PHPEXCEL'),'.php');
         require_once C('PHPEXCEL').'PHPExcel/IOFactory.php';
