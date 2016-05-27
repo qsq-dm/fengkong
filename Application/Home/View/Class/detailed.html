@@ -1,0 +1,61 @@
+<input type="hidden" name="id" value="{$data.id}">
+
+<div>
+    <label for="schoolid">校区</label>
+    <select name="schoolid" id="schoolid" class="easyui-combobox" style="width: 145px;">
+        <option value="{$data.schoolid}" selected="selected">{$data.name}</option>
+        <volist name="school" id="vo">
+            <option value="{$vo.id}">{$vo.name}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="classid">班级编号</label>
+    <input type="text" id="classid" name="classid" value="{$data.classid}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="preclassid">前序班级编号</label>
+    <input type="text" id="preclassid" name="preclassid" value="{$data.preclassid}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="people">开班人数</label>
+    <input type="text" id="people" name="people" value="{$data.people}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="distribution">发放教材数</label>
+    <input type="text" id="distribution" name="distribution" value="{$data.distribution}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="tutor">学习顾问</label>
+    <input type="text" id="tutor" name="tutor" value="{$data.tutor}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="schooltime">周上课时间</label>
+    <input type="text" id="schooltime" name="schooltime" value="{$data.schooltime}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="classhours">周课时数</label>
+    <input type="text" id="classhours" name="classhours" value="{$data.classhours}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="totalclass">总课时数</label>
+    <input type="text" id="totalclass" name="totalclass" value="{$data.totalclass}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="tution">开课时间</label>
+    <input type="text" id="tution" name="tution" class= "easyui-datebox" required ="required" style="width: 150px;" value="{$data.tution}">
+</div>
+<div>
+    <label for="ending">预计结课时间</label>
+    <input type="text" id="ending" name="ending" class= "easyui-datebox" required ="required" style="width: 150px;" value="{$data.ending}">
+</div>
+<div>
+    <label for="standard">收费标准</label>
+    <input type="text" id="standard" name="standard" value="{$data.standard}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="location">上课地点</label>
+    <input type="text" id="location" name="location" value="{$data.location}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+
+

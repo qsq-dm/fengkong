@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>华育国际</title>
+    <link rel="shortcut icon" href="{$Think.config.PUBLIC}favicon.ico" />
+    <link rel="stylesheet" type="text/css" href="{$Think.config.EASYUI}themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="{$Think.config.EASYUI}themes/icon.css">
+    <link rel="stylesheet" href="{$Think.config.HOME_CSS}public.css">
+</head>
+<body>
+
+    <div id="login">
+        <div class="input-box">
+            <label for="username">账  号</label>
+            <input type="text" id="username">
+        </div>
+        <div class="input-box">
+            <label for="password">密  码</label>
+            <input type="password" id="password">
+        </div>
+        <div class="input-box">
+            <label for="verify">验证码</label>
+            <input type="text" id="verify">
+            <img src="{:U('Public/verify')}" id="picture">
+        </div>
+    </div>
+
+<script type="text/javascript" src="{$Think.config.EASYUI}jquery.min.js"></script>
+<script type="text/javascript" src="{$Think.config.EASYUI}jquery.easyui.min.js"></script>
+<script type="text/javascript" src="{$Think.config.EASYUI}locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="{$Think.config.HOME_JS}login/login.js"></script>
+
+</body>
+</html>

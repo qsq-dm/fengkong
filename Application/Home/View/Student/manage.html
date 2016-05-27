@@ -1,0 +1,444 @@
+<div id="studentInfoTool">
+    <div id="query">
+        <div>
+            <label for="name">姓名</label>
+            <input type="text" id="name" name="name" class="easyui-textbox" data-options="width:100">
+        </div>
+        <div>
+            <label for="studentid">学号</label>
+            <input type="text" id="studentid" name="studentid" class="easyui-textbox">
+        </div>
+        <div>
+            <label for="idcard">身份证号</label>
+            <input type="text" id="idcard" name="idcard" class="easyui-textbox">
+        </div>
+        <div>
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-search'" onclick="studentHandles.search();">查询</a>
+        </div>
+        <div style="float: right">
+            <a href="javascript:;" class="easyui-linkbutton" data-options="iconCls:'icon-export'" onclick="studentHandles.export();">导出</a>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+    <table id="studentInfo"></table>
+</div>
+
+<!--详细信息-->
+<form id="stuDetailed" method="post"></form>
+
+<!--添加表单-->
+<form id="stuAdd" method="post"></form>
+
+<div id="payment">
+    <table id="dg"></table>
+</div>
+
+<script>
+
+    //学生信息表格
+    var studentInfo = $('#studentInfo');
+    //添加
+    var stuAdd = $('#stuAdd');
+    //详细信息
+    var stuDetailed = $('#stuDetailed');
+
+    var i;
+    var editRow = false;
+
+
+    studentInfo.datagrid({
+        //一个URL从远程站点请求数据
+        url:'/Home/Student/getStudentInfo',
+        //当设置为true的时候面板大小将自适应父容器
+        //fit:true,
+        //真正的自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动。
+        fitColumns:true,
+        //是否显示斑马线效果
+        striped:true,
+        //如果为true，则显示一个行号列
+        rownumbers:true,
+        //如果为true，则只允许选择一行
+        singleSelect:true,
+        //如果为true，则在同一行中显示数据
+        nowrap:false,
+        //边框是否显示
+        border:false,
+        //在从远程站点加载数据的时候显示提示消息
+        //loadMsg:'数据加载中。。。',
+        //如果为true，则在DataGrid控件底部显示分页工具栏
+        pagination:true,
+        //在设置分页属性的时候初始化页码
+        pageNumber:1,
+        //在设置分页属性的时候初始化页面大小
+        pageSize:10,
+        //在设置分页属性的时候 初始化页面大小选择列表
+        pageList:[10,20,30,40,50],
+        //顶部工具栏的DataGrid面板
+        toolbar:[
+            {
+                id:'studentBtn',
+                text:'批量导入',
+                iconCls:'icon-adds',
+                handler:function(){
+
+                }
+            },'-',
+            {
+                text:'添加',
+                iconCls:'icon-add',
+                handler:function(){
+                    studentHandles.add();
+                }
+            }
+        ],
+        columns:[[
+            {field:'classid',title:'班级编号',width:100,align:'center',sortable:true},
+            {field:'studentid',title:'学号',width:100,align:'center',sortable:true},
+            {field:'name',title:'姓名',width:100,align:'center',sortable:true},
+            {field:'sex',title:'性别',width:100,align:'center',sortable:true},
+            {field:'idcard',title:'身份证号',align:'center',sortable:true},
+            {field:'degreename',title:'学历',width:100,align:'center',sortable:true},
+            {field:'phone',title:'联系电话',width:100,align:'center',sortable:true},
+            {field:'handles',title:'操作',width:100,align:'center',
+                formatter:function(value,row,index){
+//                    var j = "<a href='javascript:;' class=\"easyui-linkbutton\" data-options=\"iconCls:'icon-edit'\" onclick=studentHandles.payment("+index+","+row.id+");>交费  </a>";
+//                    var x = "<a href='javascript:;' class=\"easyui-linkbutton\" onclick=studentHandles.detailed("+index+","+row.id+");>详情  </a>";
+//                    var d = "<a href='javascript:;' class=\"easyui-linkbutton\" onclick=studentHandles.deleterow("+index+","+row.id+");>删除</a>";
+
+                    var j = "<a href='javascript:;' onclick=studentHandles.payment("+index+","+row.id+");>交费  </a>";
+                    var x = "<a href='javascript:;' onclick=studentHandles.detailed("+index+","+row.id+");>详情  </a>";
+                    var d = "<a href='javascript:;' onclick=studentHandles.deleterow("+index+","+row.id+");>删除</a>";
+                    return j+x+d;
+                }
+            }
+        ]],
+        //formatter格式化使用linkbutton样式
+//        onLoadSuccess:function(data){
+//            $(".easyui-linkbutton").linkbutton({});
+//        },
+        //定义从服务器对数据进行排序,设为false在当前页排序,改为true要更改php查询语句代码
+        remoteSort:false,
+        //定义是否允许多列排序
+        multiSort:true
+    });
+
+
+    //上传插件开始
+    var stuuploader = new plupload.Uploader({
+        //触发文件选择对话框的DOM元素
+        browse_button: 'studentBtn',
+        //服务器端接收和处理上传文件的脚本地址
+        url:'/Home/Public/upload',
+        //flash上传组件的url地址
+        flash_swf_url : '/Public/plugins/plupload/Moxie.swf',
+        //silverlight上传组件的url地址
+        silverlight_xap_url : '/Public/plugins/plupload/Moxie.xap',
+        filters:{
+            max_file_size:'10mb',
+            //不允许选取重复文件
+            prevent_duplicates:true,
+            mime_types:[
+                {title:'excel文件',extensions:"xlsx,xls"}
+            ]
+        },
+        init:{
+            //当文件添加到上传队列后触发
+            FilesAdded: function() {
+                //开始上传
+                uploader.start();
+                $.messager.progress({
+                    title:'系统提示',
+                    msg:'数据正在导入中，请耐心等待'
+                });
+
+            },
+            //当队列中的某一个文件上传完成后触发
+            FileUploaded:function(uploader,file){
+                var name = file['name'];
+                $.ajax({
+                    url:'/Home/Student/excelImport',
+                    method:'post',
+                    data:{fileName:name},
+                    success:function(data){
+                        if (data.status > 0){
+                            $.messager.progress('close');
+                            $.messager.show({
+                                title:'系统提示',
+                                msg:data.info
+                            });
+                        }else {
+                            $.messager.progress('close');
+                            $.messager.show({
+                                title:'系统提示',
+                                msg:data.info
+                            });
+                        }
+                        studentInfo.datagrid('reload');
+                    }
+                });
+            },
+            //当发生错误时触发
+            Error: function(up, err) {
+                $.messager.show({
+                    title:'我的消息',
+                    msg:'错误#' + err.code + ":" + err.message
+                });
+            }
+        }
+    });
+    stuuploader.init();
+    //上传插件结束
+
+
+    //操作对象
+    studentHandles = {
+        //详情
+        detailed:function(index,id){
+            $.ajax({
+                url:'/Home/Student/detailed',
+                method:'post',
+                data:{
+                    id:id
+                },
+                success:function(data){
+                    stuDetailed.dialog({
+                        title:'详情',
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'保存',
+                                handler:function(){
+                                    stuDetailed.form('submit',{
+                                        url:'/Home/Student/dodetailed',
+                                        success:function(data){
+                                            if (data){
+                                                studentInfo.datagrid('reload');
+                                                stuDetailed.dialog('close').form('reset');
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    stuDetailed.dialog('close').form('reset');
+                                }
+
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+
+        //删除
+        deleterow:function(index,id){
+            $.messager.confirm('系统提示', '您确定要删除吗？', function(r){
+                if (r){
+                    $.ajax({
+                        url:'/Home/Student/delete',
+                        type:'POST',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            if (data){
+                                studentInfo.datagrid('loaded');
+                                studentInfo.datagrid('load');
+                            }
+                        }
+                    });
+                }
+            });
+        },
+
+        //添加
+        add:function(){
+            $.ajax({
+                url:'/Home/Student/add',
+                method:'post',
+                success:function(data){
+                    stuAdd.dialog({
+                        title:'添加',
+                        modal : true,
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'添加',
+                                handler:function(){
+                                    stuAdd.form('submit',{
+                                        url:'/Home/Student/doadd',
+                                        success:function(data){
+                                            //console.log(data);
+                                            if (data>0){
+                                                studentInfo.datagrid('reload');
+                                                stuAdd.dialog('close').form('reset');
+                                            }else {
+                                                $.messager.show({
+                                                    title:'系统提示',
+                                                    msg:'数据添加失败'
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    stuAdd.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+
+        //查询
+        search:function(){
+            studentInfo.datagrid('load',{
+                name: $.trim($('input[name="name"]').val()),
+                studentid: $.trim($('input[name="studentid"]').val()),
+                idcard: $.trim($('input[name="idcard"]').val())
+            });
+        },
+
+        //导出
+        export:function(){
+            location.href = '/Home/Student/studentExport';
+        },
+
+
+        //交费
+        payment:function(index,id){
+            $('#payment').dialog({
+                title:'交费详情',
+                width:350,
+                height:350,
+                onClose:function(){
+                    editRow = false;
+                },
+                onOpen:function(){
+                    $.ajax({
+                        url:'/index.php/Home/Student/payment',
+                        method:'post',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            $('#dg').datagrid({
+                                rownumbers:true,
+                                border:false,
+                                data:data,
+                                showFooter:true,
+                                toolbar:[
+                                    {
+                                        text:'新增缴费',
+                                        iconCls:'icon-add',
+                                        handler:function(){
+                                            studentHandles.paymentAdd();
+                                        }
+                                    },'-',
+                                    {
+                                        text:'保存',
+                                        iconCls:'icon-save',
+                                        handler:function(){
+                                            studentHandles.paymentSave();
+                                        }
+                                    },'-',
+                                    {
+                                        text:'取消编辑',
+                                        iconCls:'icon-redo',
+                                        handler:function(){
+                                            studentHandles.paymentRedo();
+                                        }
+                                    }
+
+                                ],
+                                columns:[[
+                                    {
+                                        field:'paydate',
+                                        title:'缴费时间',
+                                        width:150,
+                                        editor:{
+                                            type:'datetimebox',
+                                            options:{
+                                                required:true
+                                            }
+                                        }
+                                    },
+                                    {
+                                        field:'money',
+                                        title:'缴费金额',
+                                        editor:{
+                                            type:'validatebox',
+                                            options:{
+                                                required:true
+                                            }
+                                        }
+                                    }
+                                ]],
+                                //在用户完成编辑一行的时候触发
+                                onAfterEdit:function(index,row){
+                                    $.ajax({
+                                        url:'/index.php/Home/Student/paymentSave',
+                                        type:'POST',
+                                        data:{
+                                            paydate:row['paydate'],
+                                            money:row['money']
+                                        },
+                                        success:function(data){
+                                            if (data > 0){
+                                                $('#dg').datagrid('reload');
+                                            }
+                                            editRow = false;
+                                        }
+
+                                    });
+
+                                }
+                            });
+                        }
+
+                    });
+
+                },
+
+                buttons:[
+                    {
+                        text:'关闭',
+                        handler:function(){
+                            $('#payment').dialog('close');
+                        }
+                    }
+                ]
+            });
+        },
+
+        paymentAdd:function(){
+            if (!editRow){
+                i = $('#dg').datagrid('insertRow',{
+                            row: {}
+                        }).datagrid('getRows').length - 1;
+                $('#dg').datagrid('beginEdit', i);
+                editRow = true;
+            }
+        },
+
+        paymentSave:function(){
+            $('#dg').datagrid('endEdit',i);
+        },
+
+        paymentRedo:function(){
+            editRow = false;
+            $('#dg').datagrid('rejectChanges');
+        }
+    };
+
+</script>

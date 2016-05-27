@@ -1,0 +1,92 @@
+<div id="loanMplace">
+    <label for="loanMonth">请选择月份</label>
+    <input type="text" id="loanMonth" onClick="WdatePicker({dateFmt:'yyyy-MM'})"><br>
+
+    <input type="button" value="选择文件" id="loanBtn">
+    <div id="filelist"></div>
+
+</div>
+
+
+
+<script>
+/*    $('#dd').datebox({
+        required:true,
+        width:150
+    });
+    $('#month a').click(function(){
+        $(this).css("background-color","blue");
+        window.monthVal = $(this).text();
+    });*/
+
+    //上传插件开始
+    var uploader = new plupload.Uploader({
+        //触发文件选择对话框的DOM元素
+        browse_button: 'loanBtn',
+        //服务器端接收和处理上传文件的脚本地址
+        url:'/Home/Public/upload',
+        //flash上传组件的url地址
+        flash_swf_url : '/Public/plugins/plupload/Moxie.swf',
+        //silverlight上传组件的url地址
+        silverlight_xap_url : '/Public/plugins/plupload/Moxie.xap',
+        filters:{
+            max_file_size:'10mb',
+            //不允许选取重复文件
+            prevent_duplicates:true,
+            mime_types:[
+                {title:'excel文件',extensions:"xlsx,xls"}
+            ]
+        },
+        init:{
+            //当文件添加到上传队列后触发
+            FilesAdded: function(uploader,files) {
+                //列出选择文件
+                plupload.each(files, function(file) {
+                    document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+                });
+                //开始上传
+                //uploader.start();
+            },
+            //当队列中的某一个文件上传完成后触发
+            FileUploaded:function(uploader,file,responseObject){
+                //接收上传函数返回的文件路径
+                var filePath = responseObject['response'];
+                //json解析后，传给PHP会有乱码
+//                var obj = eval('('+responseObject['response']+')');
+
+//                var name = file['name'];
+                var dateVal = $('#loanMonth').val();
+                $.ajax({
+                    url:'/Home/Loan/excelImport',
+                    method:'post',
+                    data:{filePath:filePath,dateVal:dateVal},
+                    success:function(data){
+                        if (data.status > 0){
+                            $.messager.progress('close');
+                            $.messager.show({
+                                title:'系统提示',
+                                msg:data.info
+                            });
+                        }else {
+                            $.messager.progress('close');
+                            $.messager.show({
+                                title:'系统提示',
+                                msg:data.info
+                            });
+                        }
+                        loanInfo.datagrid('reload');
+                    }
+                });
+            },
+            //当发生错误时触发
+            Error: function(up, err) {
+                $.messager.show({
+                    title:'我的消息',
+                    msg:'错误#' + err.code + ":" + err.message
+                });
+            }
+        }
+    });
+    uploader.init();
+    //上传插件结束
+</script>

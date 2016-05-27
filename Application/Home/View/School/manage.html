@@ -1,0 +1,170 @@
+<!--校区信息-->
+<table id="schoolInfo"></table>
+<!--修改表单-->
+<form id="schoolEdit" method="post"></form>
+<!--添加表单-->
+<form id="schoolAdd" method="post"></form>
+
+<script>
+    var schoolInfo = $('#schoolInfo');
+    var schoolEdit = $('#schoolEdit');
+    var schoolAdd = $('#schoolAdd');
+
+    schoolInfo.datagrid({
+        //一个URL从远程站点请求数据
+        url:'/Home/School/getSchoolInfo',
+        //当设置为true的时候面板大小将自适应父容器
+        //fit:true,
+        //真正的自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动。
+        fitColumns:true,
+        //是否显示斑马线效果
+        striped:true,
+        //如果为true，则显示一个行号列
+        rownumbers:true,
+        //如果为true，则在同一行中显示数据
+        nowrap:false,
+        //边框是否显示
+        border:false,
+        //如果为true，则只允许选择一行
+        singleSelect:true,
+        //在从远程站点加载数据的时候显示提示消息
+        //loadMsg:'数据加载中。。。',
+        //如果为true，则在DataGrid控件底部显示分页工具栏
+        pagination:true,
+        //在设置分页属性的时候初始化页码
+        pageNumber:1,
+        //在设置分页属性的时候初始化页面大小
+        pageSize:10,
+        //在设置分页属性的时候 初始化页面大小选择列表
+        pageList:[10,20,30,40,50],
+        //顶部工具栏的DataGrid面板
+        toolbar:[
+            {
+                text:'添加',
+                iconCls:'icon-add',
+                handler:function(){
+                    schoolHandles.add();
+                }
+            }
+        ],
+        columns:[[
+            {field:'name',title:'校区名',width:100,align:'center',sortable:true},
+            {field:'handles',title:'操作',width:100,align:'center',
+                formatter:function(value,row,index){
+                    var e = "<a href='javascript:;' style='text-decoration: none' onclick=schoolHandles.editrow("+index+","+row.id+");>编辑  </a>";
+                    var d = "<a href='javascript:;' style='text-decoration: none' onclick=schoolHandles.deleterow("+index+","+row.id+");>   删除</a>";
+                    return e+d;
+                }
+            }
+        ]],
+        //定义从服务器对数据进行排序,设为false在当前页排序
+        //改为true要更改php查询语句代码
+        remoteSort:false,
+        //定义是否允许多列排序
+        multiSort:true
+    });
+
+    schoolHandles = {
+        //修改
+        editrow:function(index,id){
+            $.ajax({
+                url:'/Home/School/edit',
+                method:'post',
+                data:{
+                    id:id
+                },
+                success:function(data){
+                    schoolEdit.dialog({
+                        title:'编辑',
+                        modal : true,
+                        width:300,
+                        height:300,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'保存',
+                                handler:function(){
+                                    schoolEdit.form('submit',{
+                                        url:'/Home/School/doedit',
+                                        success:function(data){
+                                            if (data){
+                                                schoolInfo.datagrid('reload');
+                                                schoolEdit.dialog('close').form('reset');
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    schoolEdit.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+
+        //删除
+        deleterow:function(index,id){
+            $.messager.confirm('系统提示', '您确定要删除吗？', function(r){
+                if (r){
+                    $.ajax({
+                        url:'/Home/School/delete',
+                        type:'POST',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            if (data){
+                                schoolInfo.datagrid('loaded');
+                                schoolInfo.datagrid('load');
+                            }
+                        }
+                    });
+                }
+            });
+        },
+
+        //添加
+        add:function(){
+            $.ajax({
+                url:'/Home/School/add',
+                method:'post',
+                success:function(data){
+                    schoolAdd.dialog({
+                        title:'添加',
+                        modal : true,
+                        width:300,
+                        height:300,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'添加',
+                                handler:function(){
+                                    schoolAdd.form('submit',{
+                                        url:'/Home/School/doadd',
+                                        success:function(data){
+                                            if (data){
+                                                schoolInfo.datagrid('reload');
+                                                schoolAdd.dialog('close').form('reset');
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    schoolAdd.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        }
+    };
+</script>

@@ -1,0 +1,192 @@
+/*全局样式*/
+.dialog-button {
+  text-align:center;
+}
+
+.none{
+  display: none;
+}
+
+/*登录页面*/
+#login .input-box{
+  width: 300px;
+  height: 38px;
+  margin: 20px 0 20px 50px;
+  position: relative;
+}
+#login .input-box label{
+  display: inline-block;
+  text-align: right;
+  width: 50px;
+  font-size: 14px;
+}
+#login .input-box img{
+  width: 100px;
+  height: 36px;
+  margin-left: 10px;
+  position: absolute;
+}
+
+.easyui-linkbutton{
+  padding: 0 10px;
+}
+
+/*首页样式*/
+.north{
+  height: 98px;
+  background: url("../images/top_bg.jpg");
+}
+.logo{
+  width: 108px;
+  height: 50px;
+  background: url("../images/logo.png") no-repeat;
+  margin-left: 50px;
+  margin-top: 10px;
+  float: left;
+}
+/*.home_logo{
+  width: 500px;
+  height: 60px;
+  background: url("../images/projectname.png") no-repeat;
+  float: left;
+  margin-top: 10px;
+}*/
+
+.userInfo{
+  width: 230px;
+  height: 50px;
+  float: right;
+  margin-top: 10px;
+}
+#photo{
+  width: 50px;
+  height: 50px;
+  float: left;
+  position: relative;
+}
+
+#photo .alterPhoto{
+  position: absolute;
+  bottom: 2px;
+  background-color: #444444;
+}
+#photo .alterPhoto a{
+  color: white;
+}
+
+.userInfo #info{
+  width: 180px;
+  height: 50px;
+  line-height: 50px;
+  float: right;
+  text-align: center;
+
+}
+
+.footer{
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+}
+
+#formPass div{
+  width: 300px;
+  height: 20px;
+  margin: 15px 10px 10px 70px;
+}
+
+#formPass div label{
+  display: inline-block;
+  text-align: right;
+  width: 60px;
+
+}
+
+#menu ul li{
+  margin: 10px 0 10px 0;
+}
+
+/*校区管理页面*/
+#schoolAdd div{
+  margin: 45px;
+}
+#schoolEdit div{
+  margin: 45px;
+}
+
+/*class/selectSch页面*/
+#claPlace{
+  margin:60px;
+}
+#claPlace #classBtn{
+  margin: 20px 0 0 80px;
+}
+
+/*class/manage页面*/
+#classAdd div{
+  margin: 15px 0 0 100px;
+}
+#classAdd div label{
+  display: inline-block;
+  text-align: right;
+  width: 80px;
+}
+#classDetailed div{
+  margin: 15px 0 0 100px;
+}
+#classDetailed div label{
+  display: inline-block;
+  text-align: right;
+  width: 80px;
+}
+/*student/manage页面*/
+#query div{
+  float: left;
+}
+#stuDetailed div{
+  margin: 15px 0 0 100px;
+}
+#stuDetailed div label{
+  display: inline-block;
+  text-align: right;
+  width: 60px;
+}
+
+#stuAdd div{
+  margin: 15px 0 0 100px;
+}
+#stuAdd div label{
+  display: inline-block;
+  text-align: right;
+  width: 60px;
+}
+
+/*loan/manage页面*/
+#loanQuery div{
+  float: left;
+}
+
+/*loan/month页面*/
+#loanMplace{
+  margin: 30px 0 0 50px;
+}
+#loanMplace #loanMonth{
+  width: 180px;
+}
+#loanMplace #loanBtn{
+  margin:20px 0 20px 80px;
+}
+#loanMplace #filelist{
+  margin-left: 60px;
+}
+
+#loanAdd div{
+  margin: 15px 0 0 100px;
+}
+#loanAdd div label{
+  display: inline-block;
+  text-align: right;
+  width: 80px;
+}
+
+

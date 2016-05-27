@@ -1,0 +1,73 @@
+<!--隐藏域在这里-->
+<input type="hidden" name="id" value="{$data.id}">
+<div>
+    <label for="classid">班级编号</label>
+    <input type="text" id="classid" name="classid" value="{$data.classid}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="studentid">学号</label>
+    <input type="text" id="studentid" name="studentid" value="{$data.studentid}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="name">姓名</label>
+    <input type="text" id="name" name="name" value="{$data.name}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="spellname">姓名拼音</label>
+    <input type="text" id="spellname" name="spellname" value="{$data.spellname}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label>性别</label>
+    <if condition="$data.sex eq 1">
+
+        <input type="radio" name="sex" value="1" checked="checked">男
+        <input type="radio" name="sex" value="0">女
+
+        <else />
+
+        <input type="radio" name="sex" value="1">男
+        <input type="radio" name="sex" value="0" checked="checked">女
+
+    </if>
+</div>
+<div>
+    <label for="nation">民族</label>
+    <input type="text" id="nation" name="nation" value="{$data.nation}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="idcard">身份证号</label>
+    <input type="text" id="idcard" name="idcard" value="{$data.idcard}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="degreeid">学历</label>
+    <select name="degreeid" id="degreeid" class="easyui-combobox" style="width: 80px;">
+        <option value="{$data.degreeid}" selected="selected">{$data.degreename}</option>
+        <volist name="degree" id="vo">
+            <option value="{$vo.id}">{$vo.degreename}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="phone">联系电话</label>
+    <input type="text" id="phone" name="phone" value="{$data.phone}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="address">通信地址</label>
+    <input type="text" id="address" name="address" value="{$data.address}" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="postcode">邮编</label>
+    <input type="text" id="postcode" name="postcode" value="{$data.postcode}" class="easyui-textbox" style="width: 145px;">
+</div>
+<div>
+    <label for="email">邮箱</label>
+    <input type="text" id="email" name="email" value="{$data.email}" class="easyui-textbox" style="width: 145px;">
+</div>
+<div>
+    <label for="remark">备注</label>
+    <input type="text" id="remark" name="remark" value="{$data.remark}" class="easyui-textbox" style="width: 145px;">
+    <!--<textarea name="remark" id="remark" cols="30" rows="10">
+        {$data.remark}
+    </textarea>-->
+</div>
+

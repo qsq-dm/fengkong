@@ -1,0 +1,48 @@
+<div>
+    <label for="loaninstid">贷款机构</label>
+    <select name="loaninstid" id="loaninstid" class="easyui-combobox" style="width: 80px;">
+        <volist name="instData" id="vo">
+            <option value="{$vo.instid}">{$vo.instname}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="loaner">贷款人姓名</label>
+    <input type="text" name="loaner" id="loaner" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="idcard">身份证号</label>
+    <input type="text" name="idcard" id="idcard" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="schoolid">校区</label>
+    <select name="schoolid" id="schoolid" class="easyui-combobox" style="width: 145px;">
+        <volist name="schoolData" id="vo">
+            <option value="{$vo.id}">{$vo.name}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="loanmoney">贷款金额</label>
+    <input type="text" name="loanmoney" id="loanmoney" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="loantypeid">贷款套餐类型</label>
+    <select name="loantypeid" id="loantypeid" class="easyui-combobox" style="width: 80px;">
+        <volist name="loantypeData" id="vo">
+            <option value="{$vo.typeid}">{$vo.typename}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="loandate">放款日期</label>
+    <input type="text" id="loandate" name="loandate" class= "easyui-datebox" required ="required" style="width: 150px;">
+</div>
+<div>
+    <label for="returnnum">已还期数</label>
+    <input type="text" name="returnnum" id="returnnum" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="overduenum">逾期期数</label>
+    <input type="text" name="overduenum" id="overduenum" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>

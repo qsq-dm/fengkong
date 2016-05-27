@@ -1,0 +1,246 @@
+<!--<div id="studentInfoTool">
+    <div id="query">
+        <div>
+            <label for="name">姓名</label>
+            <input type="text" id="name" name="name">
+        </div>
+        <div>
+            <label for="studentid">学号</label>
+            <input type="text" id="studentid" name="studentid">
+        </div>
+        <div>
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-search" onclick="studentHandles.search();">查询</a>
+        </div>
+        <div style="float: right">
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-export" onclick="studentHandles.export();">导出</a>
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+</div>-->
+
+<table id="classInfo"></table>
+
+<div id="selectSch"></div>
+
+<!--详细信息-->
+<form id="classDetailed" method="post"></form>
+
+<!--添加表单-->
+<form id="classAdd" method="post"></form>
+
+
+<script>
+    //班级信息表格
+    var classInfo = $('#classInfo');
+    //选择学校
+    var selectSch =  $('#selectSch');
+    //添加
+    var classAdd = $('#classAdd');
+    //详细信息
+    var classDetailed = $('#classDetailed');
+
+    classInfo.datagrid({
+        //一个URL从远程站点请求数据
+        url:'/Home/Class/getClassInfo',
+        //当设置为true的时候面板大小将自适应父容器
+        //fit:true,
+        //真正的自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动。
+        fitColumns:true,
+        //是否显示斑马线效果
+        striped:true,
+        //如果为true，则显示一个行号列
+        rownumbers:true,
+        //如果为true，则只允许选择一行
+        singleSelect:true,
+        //如果为true，则在同一行中显示数据
+        nowrap:false,
+        //边框是否显示
+        border:false,
+        //如果为true，则在DataGrid控件底部显示分页工具栏
+        pagination:true,
+        //在设置分页属性的时候初始化页码
+        pageNumber:1,
+        //在设置分页属性的时候初始化页面大小
+        pageSize:10,
+        //在设置分页属性的时候 初始化页面大小选择列表
+        pageList:[10,20,30,40,50],
+        //顶部工具栏的DataGrid面板
+        toolbar:[
+            {
+                text:'数据导入',
+                iconCls:'icon-adds',
+                handler:function(){
+                    $.ajax({
+                        url:'/Home/Class/selectSch',
+                        method:'post',
+                        success:function(data){
+                            selectSch.dialog({
+                                title:'校区选择',
+                                width: 400,
+                                height: 400,
+                                content:data,
+                                buttons:[
+                                    {
+                                        text:'确定',
+                                        handler:function(){
+                                            if (!$('#classSch').combobox('getValue')){
+                                                $.messager.show({
+                                                    title:'系统提示',
+                                                    msg:'请选择学校'
+                                                });
+                                            }else{
+                                                selectSch.dialog('close');
+                                                uploader.start();
+                                                $.messager.progress({
+                                                    title:'系统提示',
+                                                    msg:'数据正在导入中，请耐心等待'
+                                                });
+                                            }
+                                        }
+                                    },
+                                    {
+                                        text:'关闭',
+                                        handler:function(){
+                                            selectSch.dialog('close');
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                }
+            },'-',
+            {
+                text:'添加',
+                iconCls:'icon-add',
+                handler:function(){
+                    classHandles.add();
+                }
+            }
+        ],
+        columns:[[
+            {field:'name',title:'校区',width:100,align:'center',sortable:true},
+            {field:'classid',title:'班级编号',width:100,align:'center',sortable:true},
+            {field:'people',title:'开班人数',width:100,align:'center',sortable:true},
+            {field:'tution',title:'开课时间',width:100,align:'center',sortable:true},
+            {field:'ending',title:'预计结课时间',width:100,align:'center',sortable:true},
+            {field:'handles',title:'操作',width:100,align:'center',sortable:true,
+                formatter:function(value,row,index){
+                    var x = "<a href='javascript:;' onclick=classHandles.detailed("+index+","+row.id+");>详情  </a>";
+                    var d = "<a href='javascript:;' onclick=classHandles.deleterow("+index+","+row.id+");>删除</a>";
+                    return x+d;
+                }
+            }
+        ]],
+        //定义从服务器对数据进行排序,设为false在当前页排序 改为true要更改php查询语句代码
+        remoteSort:false,
+        //定义是否允许多列排序
+        multiSort:true
+    });
+
+    classHandles = {
+        //添加
+        add:function(){
+            $.ajax({
+                url:'/Home/Class/add',
+                method:'post',
+                success:function(data){
+                    classAdd.dialog({
+                        title:'添加班级',
+                        modal : true,
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'添加',
+                                handler:function(){
+                                    classAdd.form('submit',{
+                                        url:'/Home/Class/doadd',
+                                        success:function(data){
+                                            if (data>0){
+                                                classInfo.datagrid('reload');
+                                                classAdd.dialog('close').form('reset');
+                                            }else {
+                                                $.messager.show({
+                                                    title:'系统提示',
+                                                    msg:'数据添加失败'
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    classAdd.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+        //详细信息
+        detailed:function(index,id){
+            $.ajax({
+                url:'/Home/Class/detailed',
+                method:'post',
+                data:{
+                    id:id
+                },
+                success:function(data){
+                    classDetailed.dialog({
+                        title:'详细信息',
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'保存',
+                                handler:function(){
+                                    classDetailed.form('submit',{
+                                        url:'/Home/Class/dodetailed',
+                                        success:function(data){
+                                            if (data > 0){
+                                                classInfo.datagrid('reload');
+                                                classDetailed.dialog('close').form('reset');
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    classDetailed.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+        //删除
+        deleterow:function(index,id){
+            $.messager.confirm('系统提示', '您确定要删除吗？', function(r){
+                if (r){
+                    $.ajax({
+                        url:'/Home/Class/delete',
+                        type:'POST',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            if (data){
+                                classInfo.datagrid('loaded');
+                                classInfo.datagrid('load');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+    };
+</script>

@@ -1,0 +1,367 @@
+<div id="loanInfoTool">
+    <div id="loanQuery">
+        <div>
+            <label for="loaner">姓名</label>
+            <input type="text" id="loaner" name="loaner">
+        </div>
+        <div>
+            <label for="loaninstid">贷款机构</label>
+            <select name="loaninstid" id="loaninstid">
+              <option value=""></option>
+              <volist name="instData" id="vo">
+                <option value="{$vo.instid}">{$vo.instname}</option>
+              </volist>
+            </select>
+        </div>
+        <div>
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-search" onclick="loanHandles.search();">查询</a>
+        </div>
+        <!--<div style="float: right">
+            <a href="javascript:;" class="easyui-linkbutton" iconCls="icon-export" onclick="studentHandles.export();">导出</a>
+        </div>-->
+    </div>
+    <div style="clear: both;"></div>
+    <table id="loanInfo"></table>
+</div>
+
+<div id="month"></div>
+
+<!--修改表单-->
+<form id="loanEdit" method="post"></form>
+
+<!--添加表单-->
+<form id="loanAdd" method="post"></form>
+
+<!--详细信息-->
+<div id="loanDetailed">
+  <!--<table id="loanData"></table>-->
+</div>
+
+<script>
+    //得到详细信息
+    var detailedLoanInfo = "/Home/Loan/detailed";
+    //修改
+    var editLoanInfo = "/Home/Loan/edit";
+    var doeditLoanInfo = "/Home/Loan/doedit";
+
+    //信息表格
+    var loanInfo = $('#loanInfo');
+    //添加
+    var loanAdd = $('#loanAdd');
+    //详细信息
+    var loanDetailed = $('#loanDetailed');
+    var loanData = $('#loanData');
+    //修改
+    var loanEdit = $('#loanEdit');
+
+    loanInfo.datagrid({
+        //一个URL从远程站点请求数据
+        url:'/Home/Loan/getLoanInfo',
+        //当设置为true的时候面板大小将自适应父容器
+        //fit:true,
+        //真正的自动展开/收缩列的大小，以适应网格的宽度，防止水平滚动。
+        fitColumns:true,
+        //是否显示斑马线效果
+        striped:true,
+        //如果为true，则显示一个行号列
+        rownumbers:true,
+        //如果为true，则只允许选择一行
+        singleSelect:true,
+        //如果为true，则在同一行中显示数据
+        nowrap:false,
+        //边框是否显示
+        border:false,
+        //如果为true，则在DataGrid控件底部显示分页工具栏
+        pagination:true,
+        //在设置分页属性的时候初始化页码
+        pageNumber:1,
+        //在设置分页属性的时候初始化页面大小
+        pageSize:10,
+        //在设置分页属性的时候 初始化页面大小选择列表
+        pageList:[10,20,30,40,50],
+        //顶部工具栏的DataGrid面板
+        toolbar:[
+            {
+                text:'批量导入',
+                iconCls:'icon-adds',
+                handler:function(){
+                    $.ajax({
+                        url:'/Home/Loan/month',
+                        method:'post',
+                        success:function(data){
+                            $('#month').dialog({
+                                title:'数据月份',
+                                width: 400,
+                                height: 400,
+                                content:data,
+                                buttons:[
+                                    {
+                                        text:'确定',
+                                        handler:function(){
+                                            if (!$('#loanMonth').val()){
+                                                $.messager.show({
+                                                    title:'系统提示',
+                                                    msg:'请选择日期'
+                                                });
+                                            }else{
+                                                $('#month').dialog('close');
+                                                uploader.start();
+                                                $.messager.progress({
+                                                    title:'系统提示',
+                                                    msg:'数据正在导入中，请耐心等待'
+                                                });
+                                            }
+                                            /*//easyui版本如果没有选择日期
+                                             if(!$('#dd').datebox('isValid')){
+                                             $.messager.show({
+                                             title:'系统提示',
+                                             msg:'请选择日期'
+                                             });
+                                             }else{
+                                             //var val = $('#dd').datebox('getValue');
+                                             $('#month').dialog('close');
+                                             uploader.start();
+                                             }*/
+                                        }
+                                    },
+                                    {
+                                        text:'关闭',
+                                        handler:function(){
+                                            $('#month').dialog('close');
+                                        }
+                                    }
+                                ]
+                            });
+                        }
+                    });
+                }
+            },'-',
+            {
+                text:'添加',
+                iconCls:'icon-add',
+                handler:function(){
+                    loanHandles.add();
+                }
+            }
+        ],
+        columns:[[
+            {field:'loaninstid',title:'贷款机构',align:'center',sortable:true,width:100},
+            {field:'loaner',title:'借款人',align:'center',sortable:true,width:100},
+            {field:'idcard',title:'身份证号',align:'center',sortable:true},
+            {field:'schoolid',title:'校区',align:'center',sortable:true,width:100},
+            {field:'loanmoney',title:'贷款金额',align:'center',sortable:true,width:100},
+            {field:'loantypeid',title:'套餐',align:'center',sortable:true,width:100},
+            {field:'loandate',title:'放款日期',align:'center',sortable:true,width:100},
+            {field:'typeinterval',title:'贷款期限',align:'center',sortable:true,width:100},
+            {field:'returnnum',title:'已还期数',align:'center',sortable:true,width:100},
+            {field:'overduenum',title:'逾期期数',align:'center',sortable:true,width:100},
+            {field:'infodate',title:'创建时间',align:'center',sortable:true,width:100},
+            {field:'lastupdatedate',title:'最近更新',align:'center',sortable:true,width:100},
+            {field:'handles',title:'操作',align:'center',sortable:true,width:100,
+                formatter:function(value,row,index){
+                    var x = "<a href='javascript:;' onclick=loanHandles.detailed("+index+","+row.loanid+");>详情  </a>";
+//                    var e = "<a href='javascript:;' onclick=loanHandles.editrow("+index+","+row.loanid+");>编辑  </a>";
+                    var d = "<a href='javascript:;' onclick=loanHandles.deleterow("+index+","+row.loanid+");>删除</a>";
+                    return x+d;
+                }
+            }
+        ]],
+        //定义从服务器对数据进行排序,设为false在当前页排序
+        //改为true要更改php查询语句代码
+        remoteSort:false,
+        //定义是否允许多列排序
+        multiSort:true
+    });
+
+
+    loanHandles = {
+        //添加
+        add:function(){
+            $.ajax({
+                url:'/Home/Loan/add',
+                method:'post',
+                success:function(data){
+                    loanAdd.dialog({
+                        title:'数据添加',
+                        modal : true,
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'添加',
+                                handler:function(){
+                                    loanAdd.form('submit',{
+                                        url:'/Home/Loan/doadd',
+                                        success:function(data){
+                                            if (data>0){
+                                                loanInfo.datagrid('reload');
+                                                loanInfo.dialog('close').form('reset');
+                                            }else if (data == 0){
+                                                $.messager.show({
+                                                    title:'系统提示',
+                                                    msg:'数据重复'
+                                                });
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    loanAdd.dialog('close').form('reset');
+                                }
+
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+        //详细信息
+        detailed:function(index,id){
+            $.ajax({
+                url:'/Home/Loan/detailed',
+                method:'post',
+                data:{
+                    id:id
+                },
+                success:function(data){
+                    loanDetailed.dialog({
+                        title:'详细信息',
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    loanDetailed.dialog('close');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+
+            /*
+            loanDetailed.dialog({
+                title:'详细信息',
+                width:500,
+                height:500,
+                onOpen:function(){
+                    $.ajax({
+                        url:detailedLoanInfo,
+                        method:'post',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            loanData.datagrid({
+                                rownumbers:true,
+                                border:false,
+                                data:data,
+                                showFooter:true,
+                                columns:[[
+                                    {
+                                        field:'repaymentdate',
+                                        title:'日期'
+                                    },
+                                    {
+                                        field:'returnnum',
+                                        title:'已还期数'
+                                    },
+                                    {
+                                        field:'overduenum',
+                                        title:'逾期期数'
+                                    }
+                                ]]
+                            });
+                        }
+                    });
+                },
+                buttons:[
+                    {
+                        text:'关闭',
+                        handler:function(){
+                            loanDetailed.dialog('close');
+                        }
+                    }
+                ]
+            });*/
+        },
+        //修改
+        editrow:function(index,id){
+            $.ajax({
+                url:editLoanInfo,
+                method:'post',
+                data:{
+                    id:id
+                },
+                success:function(data){
+                    loanEdit.dialog({
+                        title:'编辑',
+                        width:500,
+                        height:700,
+                        content:data,
+                        buttons:[
+                            {
+                                text:'保存',
+                                handler:function(){
+                                    loanEdit.form('submit',{
+                                        url:doeditLoanInfo,
+                                        success:function(data){
+                                            //console.log(data);
+                                            if (data > 0){
+                                                loanInfo.datagrid('reload');
+                                                loanEdit.dialog('close').form('reset');
+                                            }
+                                        }
+                                    });
+                                }
+                            },
+                            {
+                                text:'关闭',
+                                handler:function(){
+                                    classEdit.dialog('close').form('reset');
+                                }
+                            }
+                        ]
+                    });
+                }
+            });
+        },
+        //删除
+        deleterow:function(index,id){
+            $.messager.confirm('系统提示', '您确定要删除吗？', function(r){
+                if (r){
+                    $.ajax({
+                        url:'/Home/Loan/delete',
+                        type:'POST',
+                        data:{
+                            id:id
+                        },
+                        success:function(data){
+                            if (data > 0){
+                                loanInfo.datagrid('loaded');
+                                loanInfo.datagrid('load');
+                            }
+                        }
+                    });
+                }
+            });
+        },
+
+        //查询
+        search:function(){
+            loanInfo.datagrid('load',{
+                loaner: $.trim($('input[name="loaner"]').val()),
+                loaninstid: $.trim($('#loaninstid').val())
+                //studentid: $.trim($('input[name="studentid"]').val())
+            });
+        }
+
+    };
+
+</script>

@@ -1,0 +1,59 @@
+<div>
+    <label for="classid">班级编号</label>
+    <input type="text" id="classid" name="classid" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="studentid">学号</label>
+    <input type="text" id="studentid" name="studentid" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="name">姓名</label>
+    <input type="text" id="name" name="name" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="spellname">姓名拼音</label>
+    <input type="text" id="spellname" name="spellname" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label>性别</label>
+    <input type="radio" name="sex" value="1" checked="checked">男
+    <input type="radio" name="sex" value="0">女
+</div>
+<div>
+    <label for="nation">民族</label>
+    <input type="text" id="nation" name="nation" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="idcard">身份证号</label>
+    <input type="text" id="idcard" name="idcard" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="degreeid">学历</label>
+    <select name="degreeid" id="degreeid" class="easyui-combobox" style="width: 80px;">
+        <volist name="degree" id="vo">
+            <option value="{$vo.id}">{$vo.degreename}</option>
+        </volist>
+    </select>
+</div>
+<div>
+    <label for="phone">联系电话</label>
+    <input type="text" id="phone" name="phone" class=" easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="address">通信地址</label>
+    <input type="text" id="address" name="address" class="easyui-textbox easyui-validatebox" data-options="required:true" style="width: 145px;">
+</div>
+<div>
+    <label for="postcode">邮编</label>
+    <input type="text" id="postcode" name="postcode" class="easyui-textbox" style="width: 145px;">
+</div>
+<div>
+    <label for="email">邮箱</label>
+    <input type="text" id="email" name="email" class="easyui-textbox" style="width: 145px;">
+</div>
+<div>
+    <label for="remark">备注</label>
+    <input type="text" id="remark" name="remark" class="easyui-textbox" style="width: 145px;">
+</div>
+
+
